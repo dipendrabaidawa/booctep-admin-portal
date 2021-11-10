@@ -3,3 +3,4 @@ pycharm+all
 django
 **/__pycache__
 *.mp4
+*.pyc
