@@ -4,3 +4,4 @@ django
 **/__pycache__
 *.mp4
 *.pyc
+*/__pycache__
