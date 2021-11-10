@@ -157,3 +157,9 @@ class Discount(models.Model):
 class Option(models.Model):
     oname = models.CharField(max_length=255, default='')
     oval = models.CharField(max_length=255, default='')
+
+class Invoices(models.Model):
+    id = models.AutoField(primary_key=True)
+    invoice_number = models.CharField(max_length=1000, default='')
+    course_id = models.IntegerField(validators=[MaxValueValidator(11)], null=True)
+    student_id = models.IntegerField(validators=[MaxValueValidator(11)],default=0)
