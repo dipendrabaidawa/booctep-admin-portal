@@ -119,6 +119,9 @@
                                             <span class="userDatatable-title">Purchase date</span>
                                         </th>
                                         <th>
+                                            <span class="userDatatable-title">Invoice Number</span>
+                                        </th>
+                                        <th>
                                             <span class="userDatatable-title">View invoice</span>
                                         </th>
                                         <th>
@@ -181,6 +184,15 @@
                                                 <div class="orderDatatable-title">
                                                     <p class="d-block mb-0">
                                                         {{ course.purchase_date | slice:":10" }}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="orderDatatable-title">
+                                                    <p class="d-block mb-0">
+                                                        {{ course.invoice_number }}
                                                     </p>
                                                 </div>
                                             </div>
