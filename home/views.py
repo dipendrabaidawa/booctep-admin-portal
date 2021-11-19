@@ -1888,7 +1888,13 @@ def single_student(request):
 
     for course in courses:
         key = str(id) + "-" + str(course.id)
-        invoice_number = Invoices.objects.filter(course_id=course.id, student_id=id).values_list('invoice_number')[0]
+        # invoice_number = Invoices.objects.filter(course_id=course.id, student_id=id).values_list('invoice_number')[0]
+        invoice_number = Invoices.objects.filter(course_id=course.id, student_id=id).values_list('invoice_number', flat=True)
+        if len(invoice_number) > 0:
+            course.invoice_number = invoice_number[0]
+        else:
+            course.invoice_number = ""
+
         if Cache.objects.filter(key=key).exists():
             video_cache = Cache.objects.filter(key=key)[0]
             history = json.loads(video_cache.cache_str)
@@ -1902,8 +1908,7 @@ def single_student(request):
             total_cnt = VideoUploads.objects.extra(where=['find_in_set(section_id, "'+ sec_list_id +'")']).count()
             check_box = "0 - " + str(total_cnt)
         course.check_box = check_box
-        course.invoice_number = invoice_number[0]
-
+        
     return render(request, 'single_student.html', {'student': student, 'courses': courses, 'page': page, 'search': search, 'type': type})
 
 
