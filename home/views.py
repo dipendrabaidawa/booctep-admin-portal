@@ -2021,6 +2021,16 @@ def setApprove(request):
     ret = {
         'msg': 'success'
     }
+    
+    user_id = course.user_id
+    user = User.objects.get(pk=user_id)
+
+    html = "We would like to notice your recent course is approved. Welcome!"
+    subject = 'Course Approved'
+    msg = EmailMultiAlternatives(subject, '', '', [user.email])
+    msg.attach_alternative(html, "text/html")
+    msg.send()
+
     return JsonResponse(ret)
 
 
