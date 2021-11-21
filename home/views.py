@@ -2027,7 +2027,7 @@ def setApprove(request):
 
     html = "We would like to notice your recent course is approved. Welcome!"
     subject = 'Course Approved'
-    msg = EmailMultiAlternatives(subject, '', '', [user.email])
+    msg = EmailMultiAlternatives(subject, '...', 'daoatkhaiteaiso@gmail.com', [user.email])
     msg.attach_alternative(html, "text/html")
     msg.send()
 
