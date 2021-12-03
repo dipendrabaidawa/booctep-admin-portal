@@ -40,20 +40,15 @@ pymysql.install_as_MySQLdb()
 
 ALLOWED_HOSTS = ["*"]
 
-
+# This SMTP config is given from the client directly. Never change it.
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
-
-#EMAIL_HOST_USER = 'daoatkhaiteaiso@gmail.com'
-#EMAIL_HOST_PASSWORD = 'daoatkhaiteaiso123'
-EMAIL_HOST_USER = 'booctepdotcom2030@gmail.com'
-
-EMAIL_HOST_PASSWORD = 'booctepgmailcom1011'
-EMAIL_PORT = 993
-
-
-
+EMAIL_HOST = 'smtpout.secureserver.net'
+EMAIL_HOST_USER = 'support@booctep.com'
+EMAIL_HOST_PASSWORD = 'BooctepSupportCom'
+EMAIL_USE_TLS = False
+EMAIL_PORT = 465
+EMAIL_USE_SSL=True 
 
 # Application definition
 
@@ -117,22 +112,13 @@ WSGI_APPLICATION = 'admin.wsgi.application'
 
 
 DATABASES = {
-   # 'default': {
-   #    'ENGINE': 'django.db.backends.mysql',
-   #    'NAME': 'dzjq9t85dqv8kckj',
-   #    'USER': 'otp2j74kv3w9g03y', # 'root',
-   #    'PASSWORD': 'ow5vd8s2bue9y9xt',
-   #    'HOST': 'x8autxobia7sgh74.cbetxkdyhwsb.us-east-1.rds.amazonaws.com', #'localhost',   # Or an IP Address that your DB is hosted on
-   #    'PORT': '3306',
-   #  }
-
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'booctop',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
-        'PORT': '3306',
+   'default': {
+      'ENGINE': 'django.db.backends.mysql',
+      'NAME': 'dzjq9t85dqv8kckj',
+      'USER': 'otp2j74kv3w9g03y', # 'root',
+      'PASSWORD': 'ow5vd8s2bue9y9xt',
+      'HOST': 'x8autxobia7sgh74.cbetxkdyhwsb.us-east-1.rds.amazonaws.com', #'localhost',   # Or an IP Address that your DB is hosted on
+      'PORT': '3306',
     }
 }
 
