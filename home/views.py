@@ -1376,8 +1376,8 @@ def teachers(request):
     else :
         page = int(page)
 
-    allList = User.objects.filter(group_id=3)
-    teacherList = User.objects.filter(group_id=3).filter(Q(first_name__contains=search) | Q(last_name__contains=search) | Q(email__contains=search))
+    allList = User.objects.filter(Q(group_id=3) | Q(group_id=4))
+    teacherList = User.objects.filter(Q(group_id=3) | Q(group_id=4)).filter(Q(first_name__contains=search) | Q(last_name__contains=search) | Q(email__contains=search))
     paginator = Paginator(teacherList, settings.DEFAULT_PAGESIZE)
     try:
         teachers = paginator.page(page)
