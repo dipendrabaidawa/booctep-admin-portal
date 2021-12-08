@@ -65,6 +65,9 @@
                                             <span class="userDatatable-title">Bank Name</span>
                                         </th>
                                         <th>
+                                            <span class="userDatatable-title">Passport Number</span>
+                                        </th>
+                                        <th>
                                             <span class="userDatatable-title">Card Number</span>
                                         </th>
                                         <th>
@@ -100,6 +103,11 @@
                                         </td>
                                         <td>
                                             <div class="d-inline-block">
+                                                {{ item.passport_number }}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="d-inline-block">
                                                 {{ item.card_number }}
                                             </div>
                                         </td>
@@ -113,7 +121,7 @@
                                                 <li>
                                                     <div class="action-btn">
                                                         <a href="#" style="width: 50px !important;margin-right:-5px" data-toggle="modal" data-target="#modal-info-approve"
-                                                           class="px-15" onclick="showApproveModal('{{item.id}}')">
+                                                           class="px-15" onclick="showApproveModal('{{item.id}}', '{{item.card_name}}', '{{item.total_amount}}')">
                                                             <span data-feather="thumbs-up" class="nav-icon"></span></a>
                                                     </div>
                                                 </li>
@@ -230,14 +238,18 @@
 <script>
 
     let teacher_id = ''
+    let payment_method = ''
+    let total_amount = ''
 
     function setStatus(status) {
         $("#status").val(status)
         $("#search_form").submit()
     }
 
-    function showApproveModal(id) {
+    function showApproveModal(id, payment, amount) {
         teacher_id = id
+        payment_method = payment
+        total_amount = amount
     }
 
     function showDeleteModal(id) {
@@ -269,6 +281,8 @@
         let url = '/payout_approve/'
         let form_data = new FormData()
         form_data.append('teacher_id', teacher_id)
+        form_data.append('payment', payment_method)
+        form_data.append('total_amount', total_amount)
 
         $.ajax({
             url: url,
@@ -279,6 +293,7 @@
             processData: false,
             data: form_data,
         }).then((response) => {
+            console.log(response)
             setTimeout(() =>{
                 location.reload()
             }, 2000)

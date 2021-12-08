@@ -1,7 +1,7 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from home.models import *
-
+from datetime import datetime 
 
 # Create your models here.
 
@@ -68,3 +68,10 @@ class VideoUploads(models.Model):
     url = models.CharField(max_length=200)
     promo = models.IntegerField(validators=[MaxValueValidator(3)],default=0)
     duration = models.IntegerField(validators=[MaxValueValidator(10)],default=0)
+
+class transactions(models.Model):
+    id = models.AutoField(primary_key=True)
+    teacher = models.ForeignKey('home.User', on_delete=models.CASCADE, default=1)
+    payment_method = models.CharField(max_length=255, default='')
+    amount = models.FloatField(validators=[MinValueValidator(0)], default=0)
+    date_time = models.DateTimeField(default=datetime.now, blank=True)

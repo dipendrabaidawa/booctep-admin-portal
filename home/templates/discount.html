@@ -320,6 +320,12 @@
             processData: false,
             data: form_data,
         }).then((response) => {
+            // send message to all users with socket
+            socket.emit('create_discount', {
+                description: response.description,
+                discount: response.discount,
+                expire: response.expire_date
+            })
             setTimeout(()=>{
                 location.reload()
             }, 2000)

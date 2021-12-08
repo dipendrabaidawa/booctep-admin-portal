@@ -10,11 +10,13 @@ from student.models import *
 from django.conf import settings
 from teacher.models import *
 from video.models import *
+from discount.models import PromoDiscount
 from django.db.models import Q
 import uuid
 import datetime
 from django.contrib.auth.decorators import login_required
 from operator import attrgetter
+from datetime import datetime
 
 # auth part import
 from django.contrib.auth import authenticate, login, logout
@@ -994,7 +996,9 @@ def createDiscount(request):
     except:
         status = 0
     ret = {
-        'status': status
+        'description': description,
+        'discount': discount,
+        'expire_date': expire_date
     }
     return JsonResponse(ret)
 
@@ -1112,6 +1116,11 @@ def payout(request):
         if ele.course_id.user_id not in teacher_list:
             teacher_list.append(ele.course_id.user_id)
     list = []
+
+    admin_discount = Discount.objects.all()
+    now = datetime.now().strftime('%Y-%m-%d')
+    teacher_tax = Admincontrol.objects.get(pk=1).teacher_tax
+
     for teacher in teacher_list:
         course_list = Courses.objects.filter(user_id=teacher).values_list('id',flat=True)
         course_list = map(str, course_list)
@@ -1121,19 +1130,82 @@ def payout(request):
         else:
             ready_list = Student_register_courses.objects.extra(where=['find_in_set(course_id_id, "'+course_list_id+'")']).filter(withdraw=3)
         sum = 0
+        total_discount_amount = 0
         for one in ready_list:
+            # counting discount
+            if admin_discount.count() == 0:
+                discount_percent = 0
+            else:
+                if now > admin_discount[0].expire_date:
+                    discount_percent = 0
+                else:
+                    not_str = admin_discount[0].not_apply_course
+                    not_list = not_str.split(',')
+                    if str(one.course_id) in not_list:
+                        discount_percent = 0
+                    else:
+                        discount_percent = admin_discount[0].discount / 100
+
+            discount_amount = one.course_id.price * discount_percent
+            discount_price = one.course_id.price - discount_amount
+
+            # counting discount by promocode
+            promo_discount = PromoDiscount.objects.filter(course_id=one.course_id)
+            if promo_discount.count() == 0:
+                promo_percent = 0
+            else:
+                if not promo_discount[0].promo_code or now > promo_discount[0].expire:
+                    promo_percent = 0
+                else:
+                    promo_percent = promo_discount[0].discount_percent / 100
+
+            promo_discount_amount = discount_price * promo_percent
+            tax_discount_amount = one.course_id.price * teacher_tax / 100
+            total_discount_amount += round(discount_amount + promo_discount_amount + tax_discount_amount, 2)
+
             sum += one.course_id.price
+
         user = User.objects.get(pk=teacher)
-        user.total_amount = sum
+
+        # calculating the user level(teacher level)
+        course_list = Courses.objects.filter(user_id=user.id)
+        cnt = 0
+        rating_sum = 0
+        number_free_courses = 0
+        for course in course_list:
+            rating_list = Course_comments.objects.filter(course_id_id=course.id)
+            rating_sum += getRatingFunc(rating_list)
+            if len(rating_list) > 0:
+                cnt += 1
+            if course.type == 1:
+                number_free_courses += 1
+
+        if cnt == 0:
+            total_rating = 0
+        else:
+            total_rating = round(rating_sum / cnt, 1)
+
+        # calculating the teacher level
+        # Evaluate the revenue type
+        percentage_revenue = 50
+        if number_free_courses >= 1 and total_rating > 4.5 and total_students > 1000:
+            percentage_revenue = 60
+        elif number_free_courses >= 3 and total_rating > 4.7 and total_students > 5000:
+            percentage_revenue = 70
+
+        user.total_amount = (sum - total_discount_amount) * percentage_revenue / 100
+
         if Card.objects.filter(user_id=teacher).exists():
             card = Card.objects.filter(user_id=teacher)[0]
             user.bank_name = card.bank_number
             user.card_number = card.card_number
             user.card_name = card.card_name
+            user.passport_number = card.passport_number
         else:
             user.bank_name = ''
             user.card_number = ''
             user.card_name = ''
+            user.passport_number = ''
         list.append(user)
     listTmp = []
     for teacher in list:
@@ -1153,13 +1225,24 @@ def payout(request):
 @csrf_exempt
 def payoutApprove(request):
     teacher_id = request.POST.get('teacher_id')
+    payment = request.POST.get('payment')
+    amount = request.POST.get('total_amount')
     status = 1
     try:
         course_list = Courses.objects.filter(user_id=teacher_id).values_list('id', flat=True)
         course_list = map(str, course_list)
         course_id = ','.join(course_list)
-        now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         Student_register_courses.objects.extra(where=['find_in_set(course_id_id, "'+course_id+'")']).filter(withdraw=2).update(withdraw=3,approve_date=now)
+        
+        # saving transaction
+        ele = transactions(
+            amount=amount,
+            date_time=now,
+            payment_method=payment,
+            teacher_id=teacher_id
+        )
+        ele.save()
     except:
         status = 0
     ret = {
@@ -2299,3 +2382,15 @@ def deleteCourse(request):
         'status': status
     }
     return JsonResponse(ret)
+
+def getRatingFunc(rating_list):
+    sum = 0
+    count = 0
+    for rate in rating_list:
+        sum += rate.rating
+        count += 1
+    if count == 0:
+        _rating = 0
+    else:
+        _rating = sum / count
+    return round(_rating, 1)
