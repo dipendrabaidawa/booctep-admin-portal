@@ -144,10 +144,10 @@ class Refund(models.Model):
 
 class Card(models.Model):
     user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
-    card_name = models.CharField(max_length=255)
-    card_number = models.CharField(max_length=255)
-    bank_number = models.CharField(max_length=255)
-    passport_number = models.CharField(max_length=255, default='')
+    passport_number = models.CharField(max_length=255)
+    full_name = models.CharField(max_length=255)
+    country = models.CharField(max_length=255)
+    address = models.CharField(max_length=255, default='')
 
 class Discount(models.Model):
     discount = models.IntegerField(max_length=3, default=0)

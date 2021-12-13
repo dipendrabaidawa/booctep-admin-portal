@@ -1197,10 +1197,10 @@ def payout(request):
 
         if Card.objects.filter(user_id=teacher).exists():
             card = Card.objects.filter(user_id=teacher)[0]
-            user.bank_name = card.bank_number
-            user.card_number = card.card_number
-            user.card_name = card.card_name
-            user.passport_number = card.passport_number
+            user.bank_name = card.full_name
+            user.card_number = card.passport_number
+            user.card_name = card.country
+            user.passport_number = card.address
         else:
             user.bank_name = ''
             user.card_number = ''
