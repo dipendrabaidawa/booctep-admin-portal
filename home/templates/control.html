@@ -59,10 +59,9 @@
                                 <div class="page-title__left">
                                     <span class="title-text">Offers</span>
                                     <a href="#"><i class="las la-arrow-right"></i></a>
-                                    <span class="sub-title">Performance offer</span> -
-                                    <span class="sub-title">80%</span>
-                                    <a href="#" class="remove" data-toggle="modal" data-target="#modal-info-delete">
-                                        <span data-feather="trash-2"></span></a>
+                                    <span class="sub-title" id="offer_title_show">{{ offer_title }}</span>
+                                    <span class="sub-title" id="offer_percentage_show">{{ offer_percentage }}%</span>
+                                    <a class="remove ml-10" style="cursor:pointer;" onclick="deleteOffer()"> <span data-feather="trash-2"></span></a>
                                 </div>
                             </div>
                         </div>
@@ -88,8 +87,7 @@
                                     <span class="title-text">Students Tax</span>
                                     <a href="#"><i class="las la-arrow-right"></i></a>
                                     <span class="sub-title" id="student_tax_show">{{ student_tax }}% </span>
-                                    <a class="remove ml-10" style="cursor:pointer;" onclick="deleteStudentTax()">
-                                        <span data-feather="trash-2"></span></a>
+                                    <a class="remove ml-10" style="cursor:pointer;" onclick="deleteStudentTax()"> <span data-feather="trash-2"></span></a>
                                 </div>
                             </div>
                         </div>
@@ -139,25 +137,18 @@
             </div>
             <div class="modal-body">
                 <div class="add-new-contact">
-                    <form action="/">
+                    <form >
                         <div class="form-group mb-20">
                             <label>Offer Title:</label>
-                            <input type="text" class="form-control form-control-lg"
-                                   placeholder="Your Name">
+                            <input type="text" class="form-control form-control-lg" id="offer_title">
                         </div>
                         <div class="form-group mb-20">
                             <label>Offer Percentage:</label>
-                            <input type="number" class="form-control form-control-lg"
-                                   placeholder="Offer percentage">
+                            <input type="number" class="form-control form-control-lg" id="offer_percentage">
                         </div>
 
                         <div class="button-group d-flex pt-20">
-
-
-                            <button class="btn btn-primary btn-default btn-squared ">add Offer
-                            </button>
-
-
+                            <button type="button" class="btn btn-primary btn-default btn-squared" onclick="setOffer()">add Offer</button>
                         </div>
                     </form>
                 </div>
@@ -320,6 +311,49 @@
         }).then(response => {
             if(response.status == 1){
                 $("#teacher_tax_show").html("0%")
+            }
+        })
+    }
+
+    function setOffer() {
+        $("#c-job").modal("hide")
+        let offer_title = $("#offer_title").val()
+        let offer_percentage = $("#offer_percentage").val()
+
+        let url = '/save_offer/'
+        let form_data = new FormData()
+        form_data.append('title', offer_title)
+        form_data.append('percentage', offer_percentage)
+
+        $.ajax({
+            url: url,
+            type: 'POST',
+            dataType: 'json',
+            async: false,
+            contentType: false,
+            processData: false,
+            data: form_data,
+        }).then( response => {
+            if (response.status == 1) {
+                $("#offer_title_show").html(response.title + " - ")
+                $("#offer_percentage_show").html(response.percentage + "%")
+            }
+        })
+    }
+
+    function deleteOffer() {
+        let url = '/delete_offer/'
+        $.ajax({
+            url: url,
+            type: 'GET',
+            dataType: 'json',
+            async: false,
+            contentType: false,
+            processData: false,
+        }).then(response => {
+            if(response.status == 1){
+                $("#offer_title_show").html("")
+                $("#offer_percentage_show").html("")
             }
         })
     }

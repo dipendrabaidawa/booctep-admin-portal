@@ -96,6 +96,8 @@ urlpatterns = [
     url(r'^save_teacher_tax/$', saveTeacherTax, name='superusers'),
     url(r'^delete_student_tax/$', deleteStudentTax, name='superusers'),
     url(r'^delete_teacher_tax/$', deleteTeacherTax, name='superusers'),
+    url(r'^save_offer/$', saveOffer, name='superusers'),
+    url(r'^delete_offer/$', deleteOffer, name='superusers'),
 
     #spam & refund part
     url(r'^spam_set_approve/$', spamSetApprove, name='spam set approve'),

@@ -16,7 +16,6 @@ import uuid
 import datetime
 from django.contrib.auth.decorators import login_required
 from operator import attrgetter
-from datetime import datetime
 
 # auth part import
 from django.contrib.auth import authenticate, login, logout
@@ -632,7 +631,10 @@ def deleteExpense(request):
 def control(request):
     categories = Categories.objects.all()
     one = Admincontrol.objects.get(pk=1)
-    return render(request, 'control.html', {'categories': categories, 'cat_id': int(one.priority), 'student_tax': one.student_tax, 'teacher_tax': one.teacher_tax, 'menu_no':8})
+    offer_percentage = ""
+    if one.offer_percentage is not None:
+        offer_percentage = " - " + str(one.offer_percentage)
+    return render(request, 'control.html', {'categories': categories, 'cat_id': int(one.priority), 'offer_title': one.offer_title, 'offer_percentage': offer_percentage,'student_tax': one.student_tax, 'teacher_tax': one.teacher_tax, 'menu_no':8})
 
 @csrf_exempt
 def priorityChange(request):
@@ -719,6 +721,46 @@ def deleteTeacherTax(request):
     try:
         ele = Admincontrol.objects.get(pk=1)
         ele.teacher_tax = 0
+        ele.save()
+    except:
+        status = 0
+    ret = {
+        'status': status
+    }
+    return JsonResponse(ret)
+
+@csrf_exempt
+def saveOffer(request):
+    title = request.POST.get('title')
+    percentage = request.POST.get('percentage')
+    status = 1
+    try:
+        if len(Admincontrol.objects.all()) == 0:
+            ele = Admincontrol(
+                offer_title=title,
+                offer_percentage=percentage
+            )
+            ele.save()
+        else:
+            ele = Admincontrol.objects.get(pk=1)
+            ele.offer_title = title
+            ele.offer_percentage = percentage
+            ele.save()
+    except:
+        status = 0
+    ret = {
+        'status': status,
+        'title': title,
+        'percentage': percentage
+    }
+    return JsonResponse(ret)  
+
+def deleteOffer(request):
+    status = 1
+    try:
+        ele = Admincontrol.objects.get(pk=1)
+        ele.offer_title = ""
+        ele.offer_percentage = None
         ele.save()
     except:
         status = 0
@@ -981,8 +1023,11 @@ def createDiscount(request):
     description = request.POST.get('description')
     discount = request.POST.get('discount')
     expire = request.POST.get('expire')
-    expire_date = datetime.datetime.now() + datetime.timedelta(int(expire))
-    expire_date = datetime.datetime.strftime(expire_date, '%Y-%m-%d')
+    now_date = datetime.datetime.now()
+    expire_date = now_date + datetime.timedelta(int(expire))
+    expire_date = datetime.datetime.strftime(expire_date, '%Y-%m-%d %H:%M:%S')
+    now_date = datetime.datetime.strftime(now_date, '%Y-%m-%d %H:%M:%S')
+
     status = 1
     try:
         if Discount.objects.all().count() == 0:
@@ -998,7 +1043,8 @@ def createDiscount(request):
     ret = {
         'description': description,
         'discount': discount,
-        'expire_date': expire_date
+        'expire_date': expire_date,
+        'now_date': now_date
     }
     return JsonResponse(ret)
 
@@ -1118,7 +1164,7 @@ def payout(request):
     list = []
 
     admin_discount = Discount.objects.all()
-    now = datetime.now().strftime('%Y-%m-%d')
+    now = datetime.datetime.now().strftime('%Y-%m-%d')
     teacher_tax = Admincontrol.objects.get(pk=1).teacher_tax
 
     for teacher in teacher_list:
@@ -1232,7 +1278,7 @@ def payoutApprove(request):
         course_list = Courses.objects.filter(user_id=teacher_id).values_list('id', flat=True)
         course_list = map(str, course_list)
         course_id = ','.join(course_list)
-        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         Student_register_courses.objects.extra(where=['find_in_set(course_id_id, "'+course_id+'")']).filter(withdraw=2).update(withdraw=3,approve_date=now)
         
         # saving transaction

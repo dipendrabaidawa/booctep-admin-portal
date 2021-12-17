@@ -123,6 +123,8 @@ class Admincontrol(models.Model):
     priority = models.IntegerField(max_length=11)
     student_tax = models.IntegerField(max_length=11)
     teacher_tax = models.IntegerField(max_length=11)
+    offer_title = models.CharField(max_length=255, default='')
+    offer_percentage = models.IntegerField(max_length=11)
 
 class Spam(models.Model):
     teacher = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name="spam_teacher")
