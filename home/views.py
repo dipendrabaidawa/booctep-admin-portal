@@ -464,9 +464,11 @@ def marketing(request):
     else :
         courses = sorted(courseList, key=attrgetter('student_count'), reverse=True)[:20]
 
-    print("courses", courses)
+    # Getting the name and port of main host
+    optionObj = Option.objects.filter(oname="main_host")[0]
+    host_url = optionObj.oval
 
-    return render(request, 'marketing.html', {'courses': courses, 'search': search, 'type':type, 'menu_no':4})
+    return render(request, 'marketing.html', {'courses': courses, 'search': search, 'type':type, 'menu_no':4, 'host': host_url})
 
 
 def security(request):
@@ -829,7 +831,12 @@ def works(request):
         tasks = paginator.page(1)
     except EmptyPage:
         tasks = paginator.page(paginator.num_pages)
-    return render(request, 'works.html', {'search': search, 'page': page, 'tasks': tasks, 'status': status, 'menu_no':9})
+
+    # Getting the name and port of main host
+    optionObj = Option.objects.filter(oname="main_host")[0]
+    host_url = optionObj.oval
+
+    return render(request, 'works.html', {'search': search, 'page': page, 'tasks': tasks, 'status': status, 'menu_no':9, 'host': host_url})
 
 
 def tasks(request):
@@ -1972,7 +1979,12 @@ def single_teacher(request):
         courses = paginator.page(1)
     except EmptyPage:
         courses = paginator.page(paginator.num_pages)
-    return render(request, 'single_teacher.html', {'teacher': teacher, 'courses': courses, 'page': page, 'type': type, 'search': search})
+
+    # Getting the name and port of main host
+    optionObj = Option.objects.filter(oname="main_host")[0]
+    host_url = optionObj.oval
+
+    return render(request, 'single_teacher.html', {'teacher': teacher, 'courses': courses, 'page': page, 'type': type, 'search': search,'host':host_url})
 
 
 def single_student(request):
@@ -2038,7 +2050,11 @@ def single_student(request):
             check_box = "0 - " + str(total_cnt)
         course.check_box = check_box
         
-    return render(request, 'single_student.html', {'student': student, 'courses': courses, 'page': page, 'search': search, 'type': type})
+    # Getting the name and port of main host
+    optionObj = Option.objects.filter(oname="main_host")[0]
+    host_url = optionObj.oval
+
+    return render(request, 'single_student.html', {'student': student, 'courses': courses, 'page': page, 'search': search, 'type': type, 'host': host_url})
 
 
 # authentication part::

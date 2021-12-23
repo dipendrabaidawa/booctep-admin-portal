@@ -269,6 +269,7 @@
 
     let task_id = '';
     let cur_page = '{{ page }}';
+    let hostUrl = "{{host}}"
 
     function setAll() {
         $("#status").val(0)
@@ -297,7 +298,7 @@
         $("#task_title").html(title)
         $("#task_answer").html(answer)
         $("#task_file").html(url)
-        $("#task_url").attr('href', "http://localhost:8000/static" + $(obj).data('file'))
+        $("#task_url").attr('href', hostUrl + "/static" + $(obj).data('file'))
         $("#new-member").modal("show")
         task_id = id
     }

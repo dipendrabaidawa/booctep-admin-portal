@@ -146,7 +146,8 @@
 {% endblock %}
 {% block script %}
 <script>
-
+    let hostUrl = "{{ host }}"
+    
     function openDownloadModal(id) {
         $("#new-member").modal("show")
         let url = '/get_course_video/'
@@ -183,7 +184,7 @@
                                             ${video_count}<span
                                                 class="v-arrow">-</span>
                                             <span class="rl-date mr-50">${item.fields.name}</span><a
-                                                href="http://localhost:8000/static${item.fields.url}" download
+                                                href="${hostUrl}/static${item.fields.url}" download
                                                 target="_blank">Download</a>
                                         </div>
                                         <div class="changelog__accordingArrow">
@@ -198,7 +199,7 @@
                                  data-parent="#accordion">
                                 <video width="100%"
                                        controls>
-                                    <source src="http://localhost:8000/static` + item.fields.url + `"
+                                    <source src="${hostUrl}/static` + item.fields.url + `"
                                             type="video/mp4">
                                 </video>
 
