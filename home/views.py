@@ -2150,15 +2150,6 @@ def deleteVideoById(request):
 
 @csrf_exempt
 def setApprove(request):
-    # try:
-    #     course_id = request.POST.get('course_id')
-    #     course = Courses.objects.get(pk=course_id)
-    #     html = render_to_string('mail/course_mail.html', {'course': course})
-    #     print("html test:::\n", html)
-    #     send_mail('','','',['ernestpapyan96@gmail.com'],fail_silently=False,html_message=html)
-    # except:
-    #     exit()
-
     course_id = request.POST.get('course_id')
     course = Courses.objects.get(pk=course_id)
     course.approval_status = 2

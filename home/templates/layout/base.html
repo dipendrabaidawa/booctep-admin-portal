@@ -974,8 +974,6 @@
 <link type="text/css" href="{% static 'assets/vendor_assets/css/toastr.min.css' %}" rel="stylesheet">
 <link type="text/css" href="{% static 'assets/vendor_assets/css/toastr.css' %}" rel="stylesheet">
 
-
-<!-- <script src="https://booctep.com/socket.io/socket.io.js"></script> -->
 <script src="{% static 'socket/socket.io.js' %}"></script>
 
 <script type="text/javascript">
@@ -983,7 +981,6 @@
     var socket = io.connect('https://booctemp.com')
     // var socket = io.connect("http://localhost:3000")
     var id = '{{ request.user.id }}'
-    console.log("current my id:::", id)
 
     let url = '/get_nav_noti_info/'
     let form_data = new FormData()
